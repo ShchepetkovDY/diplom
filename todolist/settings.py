@@ -176,9 +176,6 @@ BOT_TOKEN = os.environ.get("BOT_TOKEN")
 
 REST_FRAMEWORK = {
     'DEFAULT_AUTO_SCHEMA_CLASS': 'drf_yasg.inspectors.SwaggerAutoSchema',
-    # 'DEFAULT_AUTHENTICATION_CLASSES': [
-    #     'rest_framework.authentication.SessionAuthentication',
-    # ],
     'DEFAULT_FILTER_BACKENDS': ['django_filters.rest_framework.DjangoFilterBackend', ],
 
     'TEST_REQUEST_DEFAULT_FORMAT': 'json',
