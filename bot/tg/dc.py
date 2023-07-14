@@ -9,9 +9,9 @@ from marshmallow import Schema, EXCLUDE
 class MessageFrom:
     """ Сообщение от пользователя """
     id: int
-    first_name: str
+    first_name: Optional[str]
     last_name: Optional[str]
-    username: str
+    username: Optional[str]
 
     class Meta:
         unknown = EXCLUDE
