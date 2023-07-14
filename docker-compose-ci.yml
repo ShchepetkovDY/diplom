@@ -33,11 +33,10 @@ services:
       DB_USER: ${DB_USER}
       DB_PASSWORD: ${DB_PASSWORD}
       SECRET_KEY: ${SECRET_KEY}
-      DEBUG: True
+      DEBUG: 1
       BOT_TOKEN: ${BOT_TOKEN}
       SOCIAL_AUTH_VK_OAUTH2_KEY: ${SOCIAL_AUTH_VK_OAUTH2_KEY}
       SOCIAL_AUTH_VK_OAUTH2_SECRET: ${SOCIAL_AUTH_VK_OAUTH2_SECRET}
-    restart: always
     depends_on:
       pgdb:
         condition: service_healthy
