@@ -6,8 +6,6 @@ services:
     # Использование готового образа postgres
     image: postgres:15.2
     # Задание переменных окружения для контейнера с postgres
-    ports:
-      - "5432:5432"
     environment:
       POSTGRES_DB: ${DB_NAME}
       POSTGRES_USER: ${DB_USER}
@@ -24,8 +22,28 @@ services:
       timeout: 5s
       retries: 15
 
+  migrations:
+    image: dshchepetkov/todolist:${GITHUB_REF_NAME}-${GITHUB_RUN_ID}
+    command: python manage.py migrate
+    #env_file: .env.prod
+    environment:
+      DB_HOST: pgdb
+      DB_PORT: 5432
+      DB_NAME: ${DB_NAME}
+      DB_USER: ${DB_USER}
+      DB_PASSWORD: ${DB_PASSWORD}
+      SECRET_KEY: ${SECRET_KEY}
+      DEBUG: True
+      BOT_TOKEN: ${BOT_TOKEN}
+      SOCIAL_AUTH_VK_OAUTH2_KEY: ${SOCIAL_AUTH_VK_OAUTH2_KEY}
+      SOCIAL_AUTH_VK_OAUTH2_SECRET: ${SOCIAL_AUTH_VK_OAUTH2_SECRET}
+    restart: always
+    depends_on:
+      pgdb:
+        condition: service_healthy
+
+
   api:
-#    build: .
     image: dshchepetkov/todolist:${GITHUB_REF_NAME}-${GITHUB_RUN_ID}
     container_name: api
     command: gunicorn todolist.wsgi:application --bind 0.0.0.0:8000
@@ -38,20 +56,17 @@ services:
       DB_PASSWORD: ${DB_PASSWORD}
       SECRET_KEY: ${SECRET_KEY}
       DEBUG: ${DEBUG}
+      BOT_TOKEN: ${BOT_TOKEN}
       SOCIAL_AUTH_VK_OAUTH2_KEY: ${SOCIAL_AUTH_VK_OAUTH2_KEY}
       SOCIAL_AUTH_VK_OAUTH2_SECRET: ${SOCIAL_AUTH_VK_OAUTH2_SECRET}
     restart: always
     depends_on:
       pgdb:
         condition: service_healthy
-    ports:
-      - "8000:8000"
-    volumes:
-      - .:/app
-
+      migrations:
+        condition: service_completed_successfully
 
   bot:
-#    build: .
     image: dshchepetkov/todolist:${GITHUB_REF_NAME}-${GITHUB_RUN_ID}
     container_name: bot
     restart: always
@@ -61,10 +76,16 @@ services:
       DB_NAME: ${DB_NAME}
       DB_USER: ${DB_USER}
       DB_PASSWORD: ${DB_PASSWORD}
+      SECRET_KEY: ${SECRET_KEY}
+      DEBUG: ${DEBUG}
       BOT_TOKEN: ${BOT_TOKEN}
+      SOCIAL_AUTH_VK_OAUTH2_KEY: ${SOCIAL_AUTH_VK_OAUTH2_KEY}
+      SOCIAL_AUTH_VK_OAUTH2_SECRET: ${SOCIAL_AUTH_VK_OAUTH2_SECRET}
     depends_on:
       pgdb:
         condition: service_healthy
+      migrations:
+        condition: service_completed_successfully
     command: python manage.py runbot
 
   frontend:
@@ -76,7 +97,6 @@ services:
     depends_on:
       api:
         condition: service_started
-
 
 volumes:
   pgdb_data:

@@ -12,7 +12,7 @@ registration (authorization via VK is possible). It is also possible to use a te
 
 ### 1. Для начала работы скопируйте репозиторий на локальную машину с помощью команды в терминале:
 
-`git clone https://github.com/ShchepetkovDY/skypro_diplom.git`
+`git clone https://github.com/ShchepetkovDY/diplom.git`
 
 ### 2. Создайте виртуальное окружение:
 
