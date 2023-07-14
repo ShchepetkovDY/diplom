@@ -20,6 +20,7 @@ class TgClient:
             return GetUpdatesResponse.Schema().load(resp.json())
         except:
             print(resp.json())
+            return GetUpdatesResponse.Schema().load({"ok": False, "result": []})
 
     def send_message(self, chat_id: int, text: str) -> SendMessageResponse:
         """ Получение пользователем сообщений от бота """
